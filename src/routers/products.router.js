@@ -15,6 +15,7 @@ productsRouter.get("/", async (req, res) => {
     if (!limit) return res.send(products);
 
     let productSplice = products.splice(limit);
+
     res.send({
       status: "success",
       message: "Get Productos",
@@ -72,6 +73,7 @@ productsRouter.post("/", async (req, res) => {
       status,
       thumbnail
     );
+
     res.send({
       status: "success",
       message: "Nuevo Producto generado",
@@ -126,6 +128,7 @@ productsRouter.delete("/:pid", async (req, res) => {
         .send({ status: "error", message: "Producto no encontrado" });
 
     productManager.deleteProduct(idProducto);
+
     res.send({
       status: "success",
       message: "Producto Eliminado",
