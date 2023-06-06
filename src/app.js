@@ -4,8 +4,10 @@ import handlebars from "express-handlebars";
 import { productsRouter } from "./routers/products.router.js";
 import { cartRouter } from "./routers/cart.router.js";
 import { viewsRouter } from "./routers/views.router.js";
-import ProductManager from "./models/productManager.js";
+import ProductManager from "./dao/serviceFileSystem/productServiceFS.js";
+import { messageService } from "./dao/service/messagesDao.js";
 import { Server } from "socket.io";
+import mongoose from "mongoose";
 
 //SET EXPRESS.
 
@@ -32,11 +34,25 @@ const webServer = app.listen(8080, () => {
 
 //AL DETECTAR ALGUNA CONEXIÓN, ENVÍA MSJ AL CLIENTE; EL CLIENTE RETORNA SOLICITUD DE PRODUCTOS Y EL SERVIDOR ENVÍA "products" PARA SU RENDERIZADO EN LA VISTA REAL TIME PRODUCTS.
 
-const io = new Server(webServer);
+export const io = new Server(webServer);
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   console.log("Conexión con WebSockets");
 
+  //CONEXIÓN CON CHAT
+
+  const messages = await messageService.getMessages();
+  socket.emit("messages", messages);
+
+  socket.on("message", async (message) => {
+    await messageService.addMessage(message);
+  });
+
+  socket.on("greetings", (data) => {
+    socket.broadcast.emit("connected", data);
+  });
+
+  //CONEXIÓN CON REAL TIME PRODUCTS
   socket.emit("link", "link");
 
   socket.on("request", async (data) => {
@@ -56,5 +72,10 @@ app.use(function (req, res, next) {
 //SET DE ENDPOINTS.
 app.use("/", viewsRouter);
 app.use("/realtimeproducts", viewsRouter);
+app.use("/chats", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
+
+mongoose.connect(
+  "mongodb+srv://hdominique:24Escherichia@hdominiquecluster.yb3kpy5.mongodb.net/?retryWrites=true&w=majority"
+);
