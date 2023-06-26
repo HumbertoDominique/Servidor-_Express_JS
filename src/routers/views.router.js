@@ -103,6 +103,7 @@ viewsRouter.get("/carts/:cid", async (req, res) => {
   try {
     let cid = req.params.cid;
     let data = await cartService.getCartById(cid);
+
     let [conditionalRender] = data;
     let render;
     if (conditionalRender.products.length == 0) {
@@ -110,7 +111,7 @@ viewsRouter.get("/carts/:cid", async (req, res) => {
     }
     res.render("cartById", { data, render });
   } catch (err) {
-    res.status(500).send({ err });
+    res.status(500).send("Error al buscar carrito");
   }
 });
 
