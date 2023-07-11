@@ -27,7 +27,9 @@ userRouter.post(
       firstName: req.user.firstName,
       lastName: req.user.lastName,
       email: req.user.email,
-      roll: req.user.roll,
+      role: req.user.role,
+      age: req.user.age,
+      cart: req.user.cart,
     };
     res.redirect("/products");
   }
@@ -38,12 +40,10 @@ userRouter.post("/logout", (req, res) => {
     req.session.destroy();
     res.redirect("/login");
   } catch (err) {
-    res
-      .status(500)
-      .send({
-        status: "error",
-        message: "Error en servidor para cierre de sesión",
-      });
+    res.status(500).send({
+      status: "error",
+      message: "Error en servidor para cierre de sesión",
+    });
   }
 });
 
