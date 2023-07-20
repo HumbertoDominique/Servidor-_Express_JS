@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { productService } from "../dao/service/productsDao.js";
-import { cartService } from "../dao/service/cartsDao.js";
+import { productService } from "../products/products.dao.js";
+import { cartService } from "../carts/carts.dao.js";
 import { isAuth, isGuest } from "../middleware/auth.middleware.js";
 import { isUpdate } from "../middleware/realTimeProducts.middleware.js";
 

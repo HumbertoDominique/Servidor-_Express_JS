@@ -1,8 +1,9 @@
 import passport from "passport";
 import GitHubStrategy from "passport-github2";
 import local from "passport-local";
-import { userService } from "../dao/service/usersDao.js";
+import { userService } from "../users/users.dao.js";
 import { createHash, isValidPassword } from "../utils.js";
+import config from "./config.js";
 
 const LocalStrategy = local.Strategy;
 
@@ -46,6 +47,22 @@ const initializePassport = () => {
       { usernameField: "email" },
       async (username, password, done) => {
         try {
+          if (
+            username === config.adminEmail &&
+            password === config.adminPassword
+          ) {
+            let superAdmin = {
+              firstName: "CoderHouse",
+              lastName: "",
+              email: "Coderuser@gmail.com",
+              age: 50,
+              password: "",
+              role: "superAdmin",
+            };
+
+            return done(null, superAdmin);
+          }
+
           const user = await userService.getUserByEmail(username);
 
           if (!user) {
